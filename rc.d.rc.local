@@ -1,0 +1,18 @@
+#!/bin/bash
+# THIS FILE IS ADDED FOR COMPATIBILITY PURPOSES
+#
+# It is highly advisable to create own systemd services or udev rules
+# to run scripts during boot instead of using this file.
+#
+# In contrast to previous versions due to parallel execution during boot
+# this script will NOT be run after all other services.
+#
+# Please note that you must run 'chmod +x /etc/rc.d/rc.local' to ensure
+# that this script will be executed during boot.
+
+touch /var/lock/subsys/local
+systemctl stop firewalld.service
+nohup /home/mikoto/db/mongo/bin/mongod -f /home/mikoto/db/mongo/conf/mongo.conf > /home/mikoto/running/logs/mongo &
+nohup redis-server /home/mikoto/running/redis.conf > /home/mikoto/running/logs/redis &
+nohup  /bin/env2/bin/python /home/mikoto/project/tornapy/app.py > /home/mikoto/running/logs/tornapy &
+nohup /home/mikoto/bin/env352/bin/jupyter notebook --ip=0.0.0.0 --notebook-dir=/data/mikoto/notebook > /home/mikoto/running/logs/ipython &
